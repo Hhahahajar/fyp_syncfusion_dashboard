@@ -1,20 +1,23 @@
-// AddOrder.jsx
+/* eslint-disable no-console */
+/* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Header } from '../components';
 
 const AddOrder = () => {
-  const history = useHistory();
   const [newOrder, setNewOrder] = useState({
-    image: '',
     item: '',
     customerName: '',
     totalAmount: '',
     status: '',
     orderId: '',
     location: '',
+    createdAt: '',
+    updatedAt: '',
   });
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,44 +27,55 @@ const AddOrder = () => {
     });
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      setNewOrder({
-        ...newOrder,
-        image: reader.result,
-      });
-    };
-  };
-
-  const handleAddOrder = async () => {
+  const handleAddOrder = async (e) => {
+    e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8080/api/orders', newOrder);
+      const response = await axios.post('http://localhost:8080/add-orders', newOrder);
       console.log('Order added successfully:', response.data);
-      history.push('/orders'); // Navigate back to the orders page
+      // Show success message or redirect to another page
+      navigate('/orders'); // Redirect to the orders page or show a success message
     } catch (error) {
-      console.error('Error adding order:', error);
+      console.error('Error adding order:', error.response); // Log the error response
+      // Show error message to the user
+      // You can display this message in a modal, toast, or any other UI component
+      // eslint-disable-next-line no-alert
+      alert('Failed to submit order. Please try again later.');
     }
   };
 
   return (
     <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl">
       <Header category="Page" title="Add Order" />
-      <div className="mb-4">
-        <h2>Add New Order</h2>
-        <form className="flex flex-col md:flex-row space-y-2 md:space-x-2 md:space-y-0">
-          <input type="file" name="image" onChange={handleImageChange} className="p-2 border rounded-md" />
-          <input type="text" name="item" placeholder="Item" value={newOrder.item} onChange={handleChange} className="p-2 border rounded-md" />
-          <input type="text" name="customerName" placeholder="Customer Name" value={newOrder.customerName} onChange={handleChange} className="p-2 border rounded-md" />
-          <input type="number" name="totalAmount" placeholder="Total Amount" value={newOrder.totalAmount} onChange={handleChange} className="p-2 border rounded-md" />
-          <input type="text" name="status" placeholder="Status" value={newOrder.status} onChange={handleChange} className="p-2 border rounded-md" />
-          <input type="text" name="orderId" placeholder="Order ID" value={newOrder.orderId} onChange={handleChange} className="p-2 border rounded-md" />
-          <input type="text" name="location" placeholder="Location" value={newOrder.location} onChange={handleChange} className="p-2 border rounded-md" />
-          <button type="button" onClick={handleAddOrder} className="p-2 bg-blue-500 text-white rounded-md">Add Order</button>
-        </form>
-      </div>
+      {/* <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 mb-8">Add Order</h2> */}
+      <form className="form-layout" onSubmit={handleAddOrder}>
+        <div className="form-group">
+          <label htmlFor="item">Item</label>
+          <input type="text" id="item" name="item" value={newOrder.item} onChange={handleChange} />
+        </div>
+        <div className="form-group">
+          <label htmlFor="customerName">Customer Name</label>
+          <input type="text" id="customerName" name="customerName" value={newOrder.customerName} onChange={handleChange} />
+        </div>
+        <div className="form-group">
+          <label htmlFor="totalAmount">Total Amount</label>
+          <input type="number" id="totalAmount" name="totalAmount" value={newOrder.totalAmount} onChange={handleChange} />
+        </div>
+        <div className="form-group">
+          <label htmlFor="status">Status</label>
+          <input type="text" id="status" name="status" value={newOrder.status} onChange={handleChange} />
+        </div>
+        <div className="form-group">
+          <label htmlFor="orderId">Order ID</label>
+          <input type="text" id="orderId" name="orderId" value={newOrder.orderId} onChange={handleChange} />
+        </div>
+        <div className="form-group">
+          <label htmlFor="location">Location</label>
+          <input type="text" id="location" name="location" value={newOrder.location} onChange={handleChange} />
+        </div>
+        <div className="form-group">
+          <button type="submit" className="button-soft-green">Add New Order</button>
+        </div>
+      </form>
     </div>
   );
 };

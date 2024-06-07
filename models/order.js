@@ -2,10 +2,6 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
 const Order = sequelize.define('Order', {
-  image: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
   item: {
     type: DataTypes.STRING,
     allowNull: false,
