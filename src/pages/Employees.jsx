@@ -1,11 +1,31 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { GridComponent, Inject, ColumnsDirective, ColumnDirective, Search, Page } from '@syncfusion/ej2-react-grids';
 
-import { employeesData, employeesGrid } from '../data/dummy';
+import { employeesGrid } from '../data/dummy';
 import { Header } from '../components';
 
 const Employees = () => {
+  const [employeesData, setEmployeesData] = useState([]);
   const toolbarOptions = ['Search'];
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/employee');
+        console.log('Fetched data:', response.data);
+        setEmployeesData(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    console.log('Orders data state:', employeesData); // Log the ordersData state to debug
+  }, [employeesData]);
 
   const editing = { allowDeleting: true, allowEditing: true };
 
